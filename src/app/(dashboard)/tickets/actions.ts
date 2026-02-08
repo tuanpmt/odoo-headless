@@ -10,7 +10,7 @@ export async function createTicket(formData: FormData) {
   const date_deadline = formData.get("date_deadline") as string || null;
 
   await query(
-    `INSERT INTO project_task (name, description, priority, stage_id, project_id, date_deadline, kanban_state, create_date, write_date, active)
+    `INSERT INTO project_task (name, description, priority, stage_id, project_id, date_deadline, state, create_date, write_date, active)
      VALUES ($1, $2, $3, $4, 5, $5, 'normal', NOW(), NOW(), true)`,
     [name, description, priority, stage_id, date_deadline]
   );

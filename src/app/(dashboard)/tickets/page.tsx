@@ -35,7 +35,7 @@ export default async function TicketsPage({ searchParams }: Props) {
   const [{ count }] = await query(`SELECT COUNT(*)::int as count FROM project_task t ${where}`, params);
 
   const tickets = await query(
-    `SELECT t.id, t.name, t.priority, t.kanban_state, t.date_deadline, t.create_date,
+    `SELECT t.id, t.name, t.priority, t.state, t.date_deadline, t.create_date,
             s.name as stage_name
      FROM project_task t
      LEFT JOIN project_task_type s ON t.stage_id = s.id
@@ -47,7 +47,7 @@ export default async function TicketsPage({ searchParams }: Props) {
 
   const totalPages = Math.ceil(count / limit);
 
-  const kanbanColors: Record<string, string> = {
+  const stateColors: Record<string, string> = {
     normal: "bg-gray-100 text-gray-800",
     done: "bg-green-100 text-green-800",
     blocked: "bg-red-100 text-red-800",
@@ -104,8 +104,8 @@ export default async function TicketsPage({ searchParams }: Props) {
                 </td>
                 <td className="p-3 text-amber-500">{"★".repeat(parseInt(String(t.priority || "0")) + 1)}</td>
                 <td className="p-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${kanbanColors[String(t.kanban_state)] || "bg-gray-100"}`}>
-                    {String(t.kanban_state)}
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${stateColors[String(t.state)] || "bg-gray-100"}`}>
+                    {String(t.state)}
                   </span>
                 </td>
                 <td className="p-3 text-gray-500">{t.date_deadline ? new Date(String(t.date_deadline)).toLocaleDateString("vi-VN") : "—"}</td>
