@@ -181,6 +181,132 @@ app.get('/helpdesk/channels', ensureAuth, async (req, res) => {
   }
 });
 
+// ==================== CRM LEADS ====================
+
+app.get('/crm/leads', ensureAuth, async (req, res) => {
+  try {
+    const { offset = 0, limit = 100, type } = req.query;
+    const options = { offset: parseInt(offset), limit: parseInt(limit) };
+    if (type === 'opportunity') {
+      return res.json(await odoo.crm.getOpportunities(options));
+    }
+    res.json(await odoo.crm.getLeads(options));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/crm/leads/:id', ensureAuth, async (req, res) => {
+  try {
+    const leads = await odoo.crm.getLeads({ domain: [['id', '=', parseInt(req.params.id)]] });
+    if (!leads.length) return res.status(404).json({ error: 'Lead not found' });
+    res.json(leads[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/crm/leads', ensureAuth, async (req, res) => {
+  try {
+    const id = await odoo.crm.createLead(req.body);
+    const leads = await odoo.crm.getLeads({ domain: [['id', '=', id]] });
+    res.status(201).json(leads[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/crm/leads/:id', ensureAuth, async (req, res) => {
+  try {
+    await odoo.crm.updateLead(parseInt(req.params.id), req.body);
+    const leads = await odoo.crm.getLeads({ domain: [['id', '=', parseInt(req.params.id)]] });
+    res.json(leads[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/crm/leads/:id/convert', ensureAuth, async (req, res) => {
+  try {
+    await odoo.crm.convertToOpportunity(parseInt(req.params.id));
+    const leads = await odoo.crm.getLeads({ domain: [['id', '=', parseInt(req.params.id)]] });
+    res.json(leads[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/crm/stages', ensureAuth, async (req, res) => {
+  try {
+    res.json(await odoo.crm.getStages());
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/crm/teams', ensureAuth, async (req, res) => {
+  try {
+    res.json(await odoo.crm.getTeams());
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==================== CONTACTS ====================
+
+app.get('/contacts', ensureAuth, async (req, res) => {
+  try {
+    const { offset = 0, limit = 100, search } = req.query;
+    let domain = [];
+    if (search) domain = [['name', 'ilike', search]];
+    const contacts = await odoo.searchRead('res.partner', domain, {
+      fields: ['id', 'name', 'email', 'phone', 'mobile', 'street', 'city', 'country_id', 'company_type', 'is_company'],
+      offset: parseInt(offset), limit: parseInt(limit), order: 'name'
+    });
+    res.json(contacts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/contacts', ensureAuth, async (req, res) => {
+  try {
+    const id = await odoo.create('res.partner', req.body);
+    const contacts = await odoo.searchRead('res.partner', [['id', '=', id]], {
+      fields: ['id', 'name', 'email', 'phone', 'mobile', 'is_company']
+    });
+    res.status(201).json(contacts[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==================== PROJECTS ====================
+
+app.get('/projects', ensureAuth, async (req, res) => {
+  try {
+    const projects = await odoo.searchRead('project.project', [], {
+      fields: ['id', 'name', 'user_id', 'partner_id', 'date_start', 'date', 'task_count', 'stage_id'],
+      order: 'name'
+    });
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/projects/:id/tasks', ensureAuth, async (req, res) => {
+  try {
+    const tasks = await odoo.searchRead('project.task', [['project_id', '=', parseInt(req.params.id)]], {
+      fields: ['id', 'name', 'user_ids', 'stage_id', 'priority', 'date_deadline', 'kanban_state'],
+      order: 'priority desc, id desc'
+    });
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ==================== GENERIC MODEL ACCESS ====================
 
 app.post('/execute', ensureAuth, async (req, res) => {

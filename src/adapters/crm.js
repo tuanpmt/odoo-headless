@@ -81,7 +81,7 @@ class CRMAdapter {
 
   async getStages() {
     return this.client.searchRead(this.models.stage, [], { 
-      fields: ['id', 'name', 'sequence', 'is_won', 'probability'],
+      fields: ['id', 'name', 'sequence', 'is_won'],
       order: 'sequence' 
     });
   }
