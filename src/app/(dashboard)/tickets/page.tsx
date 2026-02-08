@@ -14,7 +14,7 @@ export default async function TicketsPage({ searchParams }: Props) {
   const offset = (page - 1) * limit;
 
   const stages = await query(
-    "SELECT s.id, s.name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
+    "SELECT s.id, COALESCE(s.name->>'vi_VN', s.name->>'en_US', s.name::text) as name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
   );
 
   let where = "WHERE t.project_id = 5";
@@ -36,7 +36,7 @@ export default async function TicketsPage({ searchParams }: Props) {
 
   const tickets = await query(
     `SELECT t.id, t.name, t.priority, t.state, t.date_deadline, t.create_date,
-            s.name as stage_name
+            COALESCE(s.name->>'vi_VN', s.name->>'en_US', s.name::text) as stage_name
      FROM project_task t
      LEFT JOIN project_task_type s ON t.stage_id = s.id
      ${where}

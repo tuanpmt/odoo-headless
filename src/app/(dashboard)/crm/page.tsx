@@ -13,7 +13,7 @@ export default async function CrmPage({ searchParams }: Props) {
   const limit = 20;
   const offset = (page - 1) * limit;
 
-  const stages = await query("SELECT id, name FROM crm_stage ORDER BY sequence");
+  const stages = await query("SELECT id, COALESCE(name->>'vi_VN', name->>'en_US', name::text) as name FROM crm_stage ORDER BY sequence");
 
   let where = "WHERE 1=1";
   const params: unknown[] = [];
@@ -42,7 +42,7 @@ export default async function CrmPage({ searchParams }: Props) {
 
   const leads = await query(
     `SELECT l.id, l.name, l.email_from, l.phone, l.priority, l.expected_revenue, l.probability, l.type, l.create_date,
-            s.name as stage_name
+            COALESCE(s.name->>'vi_VN', s.name->>'en_US', s.name::text) as stage_name
      FROM crm_lead l
      LEFT JOIN crm_stage s ON l.stage_id = s.id
      ${where}

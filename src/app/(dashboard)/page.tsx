@@ -17,7 +17,7 @@ async function getRecentLeads() {
 
 async function getLeadsByStage() {
   return query(`
-    SELECT s.name, COUNT(l.id)::int as count
+    SELECT COALESCE(s.name->>'vi_VN', s.name->>'en_US', s.name::text) as name, COUNT(l.id)::int as count
     FROM crm_stage s
     LEFT JOIN crm_lead l ON l.stage_id = s.id
     GROUP BY s.id, s.name, s.sequence

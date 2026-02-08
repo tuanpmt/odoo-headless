@@ -4,7 +4,7 @@ import { createTicket } from "../actions";
 
 export default async function NewTicketPage() {
   const stages = await query(
-    "SELECT s.id, s.name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
+    "SELECT s.id, COALESCE(s.name->>'vi_VN', s.name->>'en_US', s.name::text) as name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
   );
   return (
     <div className="space-y-4">
