@@ -47,6 +47,7 @@ function LoginForm() {
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="email@example.com"
+              defaultValue="admin"
             />
           </div>
           <div>
@@ -57,6 +58,7 @@ function LoginForm() {
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="••••••••"
+              defaultValue="admin123"
             />
           </div>
           <button
