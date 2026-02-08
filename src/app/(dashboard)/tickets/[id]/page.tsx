@@ -7,7 +7,7 @@ export default async function EditTicketPage({ params }: { params: { id: string 
   const tickets = await query("SELECT * FROM project_task WHERE id = $1 AND project_id = 5", [parseInt(params.id)]);
   if (tickets.length === 0) notFound();
   const stages = await query(
-    "SELECT DISTINCT s.id, s.name FROM project_task_type s JOIN project_task t ON t.stage_id = s.id WHERE t.project_id = 5 ORDER BY s.name"
+    "SELECT s.id, s.name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
   );
   return (
     <div className="space-y-4">

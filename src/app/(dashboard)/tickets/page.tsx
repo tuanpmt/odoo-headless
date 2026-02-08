@@ -14,7 +14,7 @@ export default async function TicketsPage({ searchParams }: Props) {
   const offset = (page - 1) * limit;
 
   const stages = await query(
-    "SELECT DISTINCT s.id, s.name FROM project_task_type s JOIN project_task t ON t.stage_id = s.id WHERE t.project_id = 5 ORDER BY s.name"
+    "SELECT s.id, s.name FROM project_task_type s JOIN project_task_type_rel r ON s.id = r.type_id WHERE r.project_id = 5 ORDER BY s.sequence"
   );
 
   let where = "WHERE t.project_id = 5";
@@ -48,9 +48,18 @@ export default async function TicketsPage({ searchParams }: Props) {
   const totalPages = Math.ceil(count / limit);
 
   const stateColors: Record<string, string> = {
-    normal: "bg-gray-100 text-gray-800",
-    done: "bg-green-100 text-green-800",
-    blocked: "bg-red-100 text-red-800",
+    "01_in_progress": "bg-blue-100 text-blue-800",
+    "02_changes_requested": "bg-yellow-100 text-yellow-800",
+    "03_approved": "bg-green-100 text-green-800",
+    "1_done": "bg-green-100 text-green-800",
+    "1_canceled": "bg-red-100 text-red-800",
+  };
+  const stateLabels: Record<string, string> = {
+    "01_in_progress": "Đang xử lý",
+    "02_changes_requested": "Cần thay đổi",
+    "03_approved": "Đã duyệt",
+    "1_done": "Hoàn thành",
+    "1_canceled": "Đã hủy",
   };
 
   return (
@@ -105,7 +114,7 @@ export default async function TicketsPage({ searchParams }: Props) {
                 <td className="p-3 text-amber-500">{"★".repeat(parseInt(String(t.priority || "0")) + 1)}</td>
                 <td className="p-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${stateColors[String(t.state)] || "bg-gray-100"}`}>
-                    {String(t.state)}
+                    {stateLabels[String(t.state)] || String(t.state)}
                   </span>
                 </td>
                 <td className="p-3 text-gray-500">{t.date_deadline ? new Date(String(t.date_deadline)).toLocaleDateString("vi-VN") : "—"}</td>

@@ -10,9 +10,9 @@ export async function createTicket(formData: FormData) {
   const date_deadline = formData.get("date_deadline") as string || null;
 
   await query(
-    `INSERT INTO project_task (name, description, priority, stage_id, project_id, date_deadline, state, create_date, write_date, active)
-     VALUES ($1, $2, $3, $4, 5, $5, 'normal', NOW(), NOW(), true)`,
-    [name, description, priority, stage_id, date_deadline]
+    `INSERT INTO project_task (name, description, priority, stage_id, project_id, date_deadline, state, create_date, write_date, active, display_in_project)
+     VALUES ($1, $2, $3, $4, 5, $5, '01_in_progress', NOW(), NOW(), true, true)`,
+    [name, description, priority, stage_id, date_deadline || null]
   );
   redirect("/tickets");
 }
