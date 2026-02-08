@@ -1,17 +1,25 @@
 import { query } from "./db";
 import crypto from "crypto";
 
+// passlib uses "adapted base64" (ab64): . instead of +, no padding
+function ab64Decode(s: string): Buffer {
+  // Replace . with + and add padding
+  const std = s.replace(/\./g, "+");
+  const pad = (4 - (std.length % 4)) % 4;
+  return Buffer.from(std + "=".repeat(pad), "base64");
+}
+
 export async function verifyPassword(
   plainPassword: string,
   hashedPassword: string
 ): Promise<boolean> {
-  // Format: $pbkdf2-sha512$25000$salt$hash
+  // Format: $pbkdf2-sha512$600000$salt$hash (passlib ab64 encoding)
   const parts = hashedPassword.split("$");
   if (parts.length !== 5) return false;
 
   const iterations = parseInt(parts[2]);
-  const salt = Buffer.from(parts[3], "base64");
-  const expectedHash = Buffer.from(parts[4], "base64");
+  const salt = ab64Decode(parts[3]);
+  const expectedHash = ab64Decode(parts[4]);
 
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(
