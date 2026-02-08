@@ -1,25 +1,18 @@
 {
-  "name": "odoo-headless",
-  "version": "2.0.0",
-  "description": "Modern web UI for Odoo 17 via direct PostgreSQL connection",
-  "main": "src/server.js",
+  "name": "odoo-headless-app",
+  "version": "1.0.0",
+  "description": "Modern web UI for Odoo 17 (direct PostgreSQL)",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
-  "keywords": ["odoo", "postgresql", "crm", "helpdesk"],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "connect-flash": "^0.1.1",
-    "dotenv": "^16.4.7",
-    "ejs": "^3.1.10",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "pg": "^8.13.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.9"
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "ejs": "^3.1.9",
+    "pg": "^8.12.0",
+    "connect-pg-simple": "^9.0.1",
+    "crypto": "^1.0.1"
   }
 }
