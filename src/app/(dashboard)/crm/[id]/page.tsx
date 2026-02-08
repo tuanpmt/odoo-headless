@@ -4,7 +4,10 @@ import LeadForm from "@/components/lead-form";
 import { updateLead } from "../actions";
 
 export default async function EditLeadPage({ params }: { params: { id: string } }) {
-  const leads = await query("SELECT * FROM crm_lead WHERE id = $1", [parseInt(params.id)]);
+  const leads = await query(
+    "SELECT id, name, email_from, phone, type, stage_id, expected_revenue, probability, description, date_deadline, create_date FROM crm_lead WHERE id = $1",
+    [parseInt(params.id)]
+  );
   if (leads.length === 0) notFound();
   const stages = await query("SELECT id, COALESCE(name->>'vi_VN', name->>'en_US', name::text) as name FROM crm_stage ORDER BY sequence");
   return (

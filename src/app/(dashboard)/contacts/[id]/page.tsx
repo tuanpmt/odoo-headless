@@ -4,7 +4,10 @@ import ContactForm from "@/components/contact-form";
 import { updateContact } from "../actions";
 
 export default async function EditContactPage({ params }: { params: { id: string } }) {
-  const contacts = await query("SELECT * FROM res_partner WHERE id = $1 AND active = true", [parseInt(params.id)]);
+  const contacts = await query(
+    "SELECT id, name, email, phone, mobile, street, city, is_company, company_type, comment, create_date FROM res_partner WHERE id = $1 AND active = true",
+    [parseInt(params.id)]
+  );
   if (contacts.length === 0) notFound();
   return (
     <div className="space-y-4">
