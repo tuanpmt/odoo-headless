@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odoo Headless</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    [x-cloak] { display: none !important; }
+    .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition-colors; }
+    .sidebar-link:hover { @apply bg-indigo-700; }
+    .sidebar-link.active { @apply bg-indigo-700 font-semibold; }
+  </style>
+</head>
+<body class="h-full">
+<div class="flex h-full">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="hidden lg:flex lg:flex-col w-64 bg-indigo-800 text-white min-h-screen fixed z-30">
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-indigo-700">
+      <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
+        <span class="text-indigo-800 font-bold text-lg">O</span>
+      </div>
+      <div>
+        <div class="font-bold text-sm">Odoo Headless</div>
+        <div class="text-xs text-indigo-300">Business Management</div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      <a href="/" class="sidebar-link <%= page === 'dashboard' ? 'active' : '' %>">
+        <i class="fas fa-chart-pie w-5"></i> Dashboard
+      </a>
+      <a href="/crm" class="sidebar-link <%= page === 'crm' ? 'active' : '' %>">
+        <i class="fas fa-funnel-dollar w-5"></i> CRM
+      </a>
+      <a href="/tickets" class="sidebar-link <%= page === 'tickets' ? 'active' : '' %>">
+        <i class="fas fa-ticket-alt w-5"></i> Support Tickets
+      </a>
+      <a href="/contacts" class="sidebar-link <%= page === 'contacts' ? 'active' : '' %>">
+        <i class="fas fa-address-book w-5"></i> Liên hệ
+      </a>
+    </nav>
+    <div class="px-4 py-4 border-t border-indigo-700">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold">
+          <%= user.name.charAt(0).toUpperCase() %>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate"><%= user.name %></div>
+          <div class="text-xs text-indigo-300 truncate"><%= user.login %></div>
+        </div>
+        <a href="/logout" class="text-indigo-300 hover:text-white"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile header -->
+  <div class="lg:hidden fixed top-0 left-0 right-0 bg-indigo-800 text-white z-20 px-4 py-3 flex items-center justify-between">
+    <button onclick="document.getElementById('sidebar').classList.toggle('hidden');document.getElementById('sidebar').classList.toggle('flex')" class="text-white">
+      <i class="fas fa-bars text-lg"></i>
+    </button>
+    <span class="font-bold">Odoo Headless</span>
+    <a href="/logout" class="text-indigo-300"><i class="fas fa-sign-out-alt"></i></a>
+  </div>
+
+  <!-- Main -->
+  <main class="flex-1 lg:ml-64 pt-14 lg:pt-0 min-h-screen">
+    <div class="p-4 lg:p-8">
