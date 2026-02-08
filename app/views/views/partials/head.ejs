@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Odoo Headless</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="h-full bg-gray-50">
+<div class="flex h-full">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform -translate-x-full md:translate-x-0 md:static md:flex md:flex-col transition-transform flex-shrink-0">
+    <div class="flex items-center gap-3 h-16 px-6 border-b border-gray-200">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center"><i class="fas fa-cube text-white text-sm"></i></div>
+      <span class="font-bold text-gray-900 text-lg">Headless</span>
+    </div>
+    <nav class="p-4 space-y-1 flex-1">
+      <% const links = [{href:'/',icon:'fa-chart-pie',label:'Dashboard'},{href:'/crm',icon:'fa-funnel-dollar',label:'CRM'},{href:'/tickets',icon:'fa-ticket-alt',label:'Tickets'},{href:'/contacts',icon:'fa-address-book',label:'Contacts'}]; %>
+      <% links.forEach(l => { const active = l.href === '/' ? currentPath === '/' : currentPath.startsWith(l.href); %>
+        <a href="<%= l.href %>" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= active ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100' %>">
+          <i class="fas <%= l.icon %> w-5 text-center"></i> <%= l.label %>
+        </a>
+      <% }) %>
+    </nav>
+    <div class="p-4 border-t border-gray-200">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center"><i class="fas fa-user text-indigo-600 text-xs"></i></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate"><%= user ? user.name : '' %></p>
+          <p class="text-xs text-gray-500 truncate"><%= user ? user.login : '' %></p>
+        </div>
+        <a href="/logout" class="text-gray-400 hover:text-red-500" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" onclick="document.getElementById('sidebar').classList.add('-translate-x-full');this.classList.add('hidden')"></div>
+  <main class="flex-1 flex flex-col min-h-screen overflow-auto">
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center px-4 md:px-8 gap-4 sticky top-0 z-10">
+      <button class="md:hidden text-gray-600" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full');document.getElementById('sidebar-overlay').classList.toggle('hidden')"><i class="fas fa-bars text-lg"></i></button>
+      <h1 class="text-lg font-semibold text-gray-900"><%= typeof pageTitle !== 'undefined' ? pageTitle : '' %></h1>
+    </header>
+    <div class="flex-1 p-4 md:p-8">

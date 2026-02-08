@@ -1,0 +1,54 @@
+<%- include('../partials/head', { title: 'CRM', pageTitle: 'CRM - Leads & Opportunities' }) %>
+
+<div class="space-y-4">
+  <!-- Toolbar -->
+  <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+    <form class="flex gap-2 flex-1 max-w-lg" method="GET" action="/crm">
+      <input type="text" name="q" value="<%= search %>" placeholder="Search leads..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      <select name="stage" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+        <option value="">All stages</option>
+        <% stages.forEach(s => { %><option value="<%= s.id %>" <%= stageFilter == s.id ? 'selected' : '' %>><%= parseName(s.name) %></option><% }) %>
+      </select>
+      <button class="px-4 py-2 bg-gray-100 rounded-lg text-sm hover:bg-gray-200"><i class="fas fa-search"></i></button>
+    </form>
+    <a href="/crm/new" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 whitespace-nowrap"><i class="fas fa-plus mr-1"></i> New Lead</a>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="text-left px-4 py-3 font-medium text-gray-600">Name</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 hidden sm:table-cell">Contact</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 hidden md:table-cell">Email</th>
+            <th class="text-right px-4 py-3 font-medium text-gray-600 hidden lg:table-cell">Revenue</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600">Stage</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 hidden lg:table-cell">Priority</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% leads.forEach(l => { %>
+          <tr class="hover:bg-gray-50 cursor-pointer" onclick="location.href='/crm/<%= l.id %>'">
+            <td class="px-4 py-3 font-medium text-gray-900"><%= l.name %></td>
+            <td class="px-4 py-3 text-gray-600 hidden sm:table-cell"><%= l.partner_name || '-' %></td>
+            <td class="px-4 py-3 text-gray-600 hidden md:table-cell"><%= l.email_from || '-' %></td>
+            <td class="px-4 py-3 text-right text-gray-900 hidden lg:table-cell"><%= l.expected_revenue ? Number(l.expected_revenue).toLocaleString() : '-' %></td>
+            <td class="px-4 py-3">
+              <% const sname = parseName(l.stage_name); const scolor = sname === 'Won' || sname === 'Đạt' ? 'green' : sname === 'New' || sname === 'Mới' ? 'blue' : 'indigo'; %>
+              <span class="text-xs px-2 py-1 rounded-full bg-<%= scolor %>-50 text-<%= scolor %>-700"><%= sname %></span>
+            </td>
+            <td class="px-4 py-3 hidden lg:table-cell">
+              <% for(let i=0; i<3; i++) { %><i class="fas fa-star text-xs <%= i < parseInt(l.priority||0) ? 'text-yellow-400' : 'text-gray-200' %>"></i><% } %>
+            </td>
+          </tr>
+          <% }) %>
+          <% if (!leads.length) { %><tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No leads found</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot') %>

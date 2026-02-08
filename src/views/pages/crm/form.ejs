@@ -1,0 +1,87 @@
+<%- include('../../partials/layout') %>
+
+<div class="flex items-center gap-3 mb-6">
+  <a href="/crm" class="text-gray-400 hover:text-gray-600"><i class="fas fa-arrow-left"></i></a>
+  <h1 class="text-2xl font-bold text-gray-900"><%= lead ? 'Chỉnh sửa Lead' : 'Tạo Lead mới' %></h1>
+</div>
+
+<form method="POST" action="/crm/<%= lead ? lead.id : 'create' %>" class="bg-white rounded-xl shadow-sm border p-6 max-w-3xl">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Tên lead *</label>
+      <input type="text" name="name" required value="<%= lead ? lead.name : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Loại</label>
+      <select name="type" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        <option value="lead" <%= lead && lead.type === 'lead' ? 'selected' : '' %>>Lead</option>
+        <option value="opportunity" <%= lead && lead.type === 'opportunity' ? 'selected' : '' %>>Cơ hội</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Giai đoạn</label>
+      <select name="stage_id" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        <% stages.forEach(s => { %>
+          <option value="<%= s.id %>" <%= lead && lead.stage_id == s.id ? 'selected' : '' %>><%= getStageName(s.name) %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Công ty</label>
+      <input type="text" name="partner_name" value="<%= lead ? (lead.partner_name || '') : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Liên hệ</label>
+      <input type="text" name="contact_name" value="<%= lead ? (lead.contact_name || '') : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+      <input type="email" name="email_from" value="<%= lead ? (lead.email_from || '') : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Điện thoại</label>
+      <input type="text" name="phone" value="<%= lead ? (lead.phone || '') : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Doanh thu kỳ vọng</label>
+      <input type="number" name="expected_revenue" value="<%= lead ? (lead.expected_revenue || 0) : '' %>"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Ưu tiên</label>
+      <select name="priority" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        <option value="0" <%= lead && lead.priority === '0' ? 'selected' : '' %>>Thường</option>
+        <option value="1" <%= (!lead || lead.priority === '1') ? 'selected' : '' %>>Cao</option>
+        <option value="2" <%= lead && lead.priority === '2' ? 'selected' : '' %>>Rất cao</option>
+        <option value="3" <%= lead && lead.priority === '3' ? 'selected' : '' %>>Khẩn cấp</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Phụ trách</label>
+      <select name="user_id" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        <option value="">-- Chọn --</option>
+        <% users.forEach(u => { %>
+          <option value="<%= u.id %>" <%= lead && lead.user_id == u.id ? 'selected' : '' %>><%= u.name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
+      <textarea name="description" rows="3"
+        class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"><%= lead ? (lead.description || '') : '' %></textarea>
+    </div>
+  </div>
+  <div class="flex gap-3 mt-6">
+    <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-indigo-700">
+      <i class="fas fa-save mr-1"></i> <%= lead ? 'Cập nhật' : 'Tạo mới' %>
+    </button>
+    <a href="/crm" class="text-gray-600 hover:text-gray-800 px-4 py-2 text-sm">Hủy</a>
+  </div>
+</form>
+
+<%- include('../../partials/footer') %>
